@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gerador de Recibos</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+<body>
+  <div id="content"></div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    ipcRenderer.on('navigate', (event, route) => {
+      loadPage(route);
+    });
+
+    function loadPage(route) {
+      const contentDiv = document.getElementById('content');
+      contentDiv.innerHTML = ''; // Limpa o conteúdo antes de carregar a nova página
+      const iframe = document.createElement('iframe');
+      iframe.src = route;
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      contentDiv.appendChild(iframe);
+    }
+  </script>
+</body>
+</html>
