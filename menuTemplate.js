@@ -8,7 +8,7 @@ const menuTemplate = [
             {
                 label: 'Cadastrar',
                 click: () => {
-                    mainWindow.webContents.send('open-cadastro');
+                    mainWindow.webContents.send('navigate', 'cliente/cadastro');
                 }
             },
             {

@@ -1,43 +1,80 @@
-const { app, BrowserWindow, Menu, ipcMain  } = require('electron')
-const menuTemplate = require('./menuTemplate');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { getUrlPage } = require("./src/utils/utils")
 
-let mainWindow;
 
-const createWindow = async () => {
+var mainWindow = null;
+
+async function createWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        title: 'Gerador de Recibos'
+        title: 'Gerador de Recibos',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        }
     });
 
     await mainWindow.loadFile('index.html');
-
-    const menu = Menu.buildFromTemplate(menuTemplate);
-    Menu.setApplicationMenu(menu);
+    mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+
+    // Construir o menu quando a janela estiver pronta
+    buildMenu();
+}
+
+function buildMenu() {
+    const menuTemplate = [
+        {
+            label: 'Clientes',
+            submenu: [
+                {
+                    label: 'Cadastrar',
+                    click: () => {
+                        mainWindow.webContents.send('navigate', getUrlPage('cliente/cadastro'));
+                    }
+                },
+                {
+                    label: 'Consultar',
+                    click: () => {
+                        // Lógica para abrir a janela de consulta de clientes
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Gerar Recibo',
+            click: () => {
+                // Lógica para gerar recibo
+            }
+        },
+        {
+            label: 'Configurações',
+            click: () => {
+                // Lógica para abrir a janela de configurações
+            }
+        }
+    ];
+
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
 }
 
 app.whenReady().then(() => {
-    createWindow()
+    createWindow();
 
     app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
-})
+        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+});
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
-})
+    if (process.platform !== 'darwin') app.quit();
+});
 
-ipcMain.on('navigate', (event, route) => {
-    mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'src', 'pages', `${route}`, 'index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
-  });
 
 module.exports = { mainWindow };

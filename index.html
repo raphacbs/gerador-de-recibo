@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Gerador de Recibos</title>
+  <link rel="stylesheet" href="style.css">
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
 </head>
@@ -16,7 +17,10 @@
     });
 
     function loadPage(route) {
+      console.log(route);
       const contentDiv = document.getElementById('content');
+      contentDiv.style.width = '100%';
+      contentDiv.style.height = '100%';
       contentDiv.innerHTML = ''; // Limpa o conteúdo antes de carregar a nova página
       const iframe = document.createElement('iframe');
       iframe.src = route;
